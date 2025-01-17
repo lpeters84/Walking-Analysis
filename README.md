@@ -20,4 +20,4 @@ After loading both datasets, the z (vertical) coordinates of the data are extrac
 
 Then, the x (anterior/posterior) coordinates are extracted from the walking data. These are used in conjuction with the z coordinates to determine the angle between the head and the C7 while walking. The angular velocity is calculated and used to determine when the head is nodding forward. 
 
-For the force and moment analyses, the force values are calibrated with a calibration matrix along with excitation and gain values. 
+For the force and moment analyses, the force values are calibrated to convert raw voltage values into force values with a calibration matrix along with voltage excitation and gain values. These are used to plot the x, y, and z forces on each force plate, as well as the x, y, and z moments on one force plate (FP3). The
