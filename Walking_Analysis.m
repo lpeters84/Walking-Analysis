@@ -210,7 +210,7 @@ linkaxes([suba,subb,subc,subd], 'y')
 figure()
 plot(time_analog, walk_0001.Cal.ForceP3(:,1)) 
 xlabel('Time (s)')
-ylabel('Force (N)') % what are the units?
+ylabel('Force (N)')
 title('Ground Reaction Forces on Force Plate 3')
 hold on 
 plot(time_analog, walk_0001.Cal.ForceP3(:,2))
