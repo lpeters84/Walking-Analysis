@@ -93,17 +93,13 @@ for i = 2:length(pos_idx)-1
     % values, copy it to "pos_idx_cont" array and increase row value
     if (pos_idx(i-1) == pos_idx(i)-1) || ((pos_idx(i-1) == pos_idx(i)-1) && (pos_idx(i+1) == pos_idx(i)+1))
         pos_idx_cont(j,k) = pos_idx(i);
-        %j = j+1;
-    % if the value is at the start of a continuous string of values, reset
-    % row value, increase column value, copy it to "pos_idx_cont" array,
-    % and increase row value
+    % if the value is at the start of a continuous string of values, 
+    % increase column value and copy it to "pos_idx_cont" array
     elseif (pos_idx(i+1) == pos_idx(i)+1)
-        %j = 1; 
         k = k+1;
         pos_idx_cont(j,k) = pos_idx(i);
-        %j = j+1;
-    end
-    j = j+1;
+    end 
+    j = j+1; % always increase row value at the end of loop
 end
 
 % edge case for last element
@@ -173,7 +169,7 @@ figure()
 subplot(2,2,1)
 plot(time_analog, walk_0001.Cal.ForceP1(:,1))
 title('FP1')
-xlabel('Frames')
+xlabel('Time (s)')
 ylabel('Force (N)')
 hold on
 plot(time_analog, walk_0001.Cal.ForceP1(:,2))
@@ -182,7 +178,7 @@ plot(time_analog, walk_0001.Cal.ForceP1(:,3))
 subplot(2,2,2)
 plot(time_analog, walk_0001.Cal.ForceP2(:,1))
 title('FP2')
-xlabel('Frames')
+xlabel('Time (s)')
 ylabel('Force (N)')
 hold on
 plot(time_analog, walk_0001.Cal.ForceP2(:,2))
@@ -191,7 +187,7 @@ plot(time_analog, walk_0001.Cal.ForceP2(:,3))
 subplot(2,2,3)
 plot(time_analog, walk_0001.Cal.ForceP3(:,1))
 title('FP3')
-xlabel('Frames')
+xlabel('Time (s)')
 ylabel('Force (N)')
 hold on
 plot(time_analog, walk_0001.Cal.ForceP3(:,2))
@@ -200,13 +196,13 @@ plot(time_analog, walk_0001.Cal.ForceP3(:,3))
 subplot(2,2,4)
 plot(time_analog, walk_0001.Cal.ForceP4(:,1))
 title('FP4')
-xlabel('Frames')
+xlabel('Time (s)')
 ylabel('Force (N)')
 hold on
 plot(time_analog, walk_0001.Cal.ForceP4(:,2))
 plot(time_analog, walk_0001.Cal.ForceP4(:,3))
 
-%% Plot Single Steps 
+%% Plot Single Step on Each Force Plate
 
 % plot forces from Force Plate 3
 figure()
@@ -229,6 +225,66 @@ hold on
 plot(time_analog, walk_0001.Cal.ForceP3(:,5))
 plot(time_analog, walk_0001.Cal.ForceP3(:,6))
 legend('Mx', 'My', 'Mz')
+
+
+%% Plot Static Force Plate Data
+
+s_time_analog = 0:1/fs:(length(static.Analog.Data)-1)/1000;
+
+% labels for struct 
+s_orderplate = {'sForceP1', 'sForceP2', 'sForceP3', 'sForceP4'};
+s_order = {'sFx', 'sFy', 'sFz','sMx','sMy','sMz'};
+
+% split and calibrate data. Add into walk_0001 struct as struct called 
+% "Cal" for each force plate
+s_count = 1;
+for sp = 1:numel(s_orderplate)
+    for sq = 1:numel(s_order)
+        % convert voltage (electrical data) into Newtons (force data) using calibration matrix 
+        static.Cal.(char(s_orderplate(sp)))(:,sq) = static.Analog.Data(s_count, :)*Cal(sp,sq)./(excitation*gain);
+        s_count = s_count + 1;
+    end
+end 
+
+% plot GRFs on all four force plates
+figure()
+sub1 = subplot(2,2,1);
+plot(s_time_analog, static.Cal.sForceP1(:,1))
+title('FP1')
+xlabel('Time (s)')
+ylabel('Force (N)')
+hold on
+plot(s_time_analog, static.Cal.sForceP1(:,2))
+plot(s_time_analog, static.Cal.sForceP1(:,3))
+
+sub2 = subplot(2,2,2);
+plot(s_time_analog, static.Cal.sForceP2(:,1))
+title('FP2')
+xlabel('Time (s)')
+ylabel('Force (N)')
+hold on
+plot(s_time_analog, static.Cal.sForceP2(:,2))
+plot(s_time_analog, static.Cal.sForceP2(:,3))
+
+sub3 = subplot(2,2,3);
+plot(s_time_analog, static.Cal.sForceP3(:,1))
+title('FP3')
+xlabel('Time (s)')
+ylabel('Force (N)')
+hold on
+plot(s_time_analog, static.Cal.sForceP3(:,2))
+plot(s_time_analog, static.Cal.sForceP3(:,3))
+
+sub4 = subplot(2,2,4);
+plot(s_time_analog, static.Cal.sForceP4(:,1))
+title('FP4')
+xlabel('Time (s)')
+ylabel('Force (N)')
+hold on
+plot(s_time_analog, static.Cal.sForceP4(:,2))
+plot(s_time_analog, static.Cal.sForceP4(:,3))
+
+linkaxes([sub1, sub2, sub3, sub4])
 
 %% Calculate Subject Mass 
 
