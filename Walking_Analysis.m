@@ -166,7 +166,7 @@ end
 
 % plot GRFs on all four force plates
 figure()
-subplot(2,2,1)
+suba = subplot(2,2,1);
 plot(time_analog, walk_0001.Cal.ForceP1(:,1))
 title('FP1')
 xlabel('Time (s)')
@@ -175,7 +175,7 @@ hold on
 plot(time_analog, walk_0001.Cal.ForceP1(:,2))
 plot(time_analog, walk_0001.Cal.ForceP1(:,3))
 
-subplot(2,2,2)
+subb = subplot(2,2,2);
 plot(time_analog, walk_0001.Cal.ForceP2(:,1))
 title('FP2')
 xlabel('Time (s)')
@@ -184,7 +184,7 @@ hold on
 plot(time_analog, walk_0001.Cal.ForceP2(:,2))
 plot(time_analog, walk_0001.Cal.ForceP2(:,3))
 
-subplot(2,2,3)
+subc = subplot(2,2,3);
 plot(time_analog, walk_0001.Cal.ForceP3(:,1))
 title('FP3')
 xlabel('Time (s)')
@@ -193,7 +193,7 @@ hold on
 plot(time_analog, walk_0001.Cal.ForceP3(:,2))
 plot(time_analog, walk_0001.Cal.ForceP3(:,3))
 
-subplot(2,2,4)
+subd = subplot(2,2,4);
 plot(time_analog, walk_0001.Cal.ForceP4(:,1))
 title('FP4')
 xlabel('Time (s)')
@@ -201,6 +201,8 @@ ylabel('Force (N)')
 hold on
 plot(time_analog, walk_0001.Cal.ForceP4(:,2))
 plot(time_analog, walk_0001.Cal.ForceP4(:,3))
+
+linkaxes([suba,subb,subc,subd], 'y')
 
 %% Plot Single Step on Each Force Plate
 
@@ -229,62 +231,63 @@ legend('Mx', 'My', 'Mz')
 
 %% Plot Static Force Plate Data
 
-s_time_analog = 0:1/fs:(length(static.Analog.Data)-1)/1000;
+static_time_analog = 0:1/fs:(length(static.Analog.Data)-1)/1000;
 
 % labels for struct 
-s_orderplate = {'sForceP1', 'sForceP2', 'sForceP3', 'sForceP4'};
-s_order = {'sFx', 'sFy', 'sFz','sMx','sMy','sMz'};
+static_orderplate = {'sForceP1', 'sForceP2', 'sForceP3', 'sForceP4'};
+static_order = {'sFx', 'sFy', 'sFz','sMx','sMy','sMz'};
 
 % split and calibrate data. Add into walk_0001 struct as struct called 
 % "Cal" for each force plate
-s_count = 1;
-for sp = 1:numel(s_orderplate)
-    for sq = 1:numel(s_order)
+static_count = 1;
+for r = 1:numel(static_orderplate)
+    for s = 1:numel(static_order)
         % convert voltage (electrical data) into Newtons (force data) using calibration matrix 
-        static.Cal.(char(s_orderplate(sp)))(:,sq) = static.Analog.Data(s_count, :)*Cal(sp,sq)./(excitation*gain);
-        s_count = s_count + 1;
+        static.Cal.(char(static_orderplate(r)))(:,s) = static.Analog.Data(static_count, :)*Cal(r,s)./(excitation*gain);
+        static_count = static_count + 1;
     end
 end 
 
-% plot GRFs on all four force plates
+% plot GRFs on all four force plates to determine which force plate was
+% used
 figure()
 sub1 = subplot(2,2,1);
-plot(s_time_analog, static.Cal.sForceP1(:,1))
+plot(static_time_analog, static.Cal.sForceP1(:,1))
 title('FP1')
 xlabel('Time (s)')
 ylabel('Force (N)')
 hold on
-plot(s_time_analog, static.Cal.sForceP1(:,2))
-plot(s_time_analog, static.Cal.sForceP1(:,3))
+plot(static_time_analog, static.Cal.sForceP1(:,2))
+plot(static_time_analog, static.Cal.sForceP1(:,3))
 
 sub2 = subplot(2,2,2);
-plot(s_time_analog, static.Cal.sForceP2(:,1))
+plot(static_time_analog, static.Cal.sForceP2(:,1))
 title('FP2')
 xlabel('Time (s)')
 ylabel('Force (N)')
 hold on
-plot(s_time_analog, static.Cal.sForceP2(:,2))
-plot(s_time_analog, static.Cal.sForceP2(:,3))
+plot(static_time_analog, static.Cal.sForceP2(:,2))
+plot(static_time_analog, static.Cal.sForceP2(:,3))
 
 sub3 = subplot(2,2,3);
-plot(s_time_analog, static.Cal.sForceP3(:,1))
+plot(static_time_analog, static.Cal.sForceP3(:,1))
 title('FP3')
 xlabel('Time (s)')
 ylabel('Force (N)')
 hold on
-plot(s_time_analog, static.Cal.sForceP3(:,2))
-plot(s_time_analog, static.Cal.sForceP3(:,3))
+plot(static_time_analog, static.Cal.sForceP3(:,2))
+plot(static_time_analog, static.Cal.sForceP3(:,3))
 
 sub4 = subplot(2,2,4);
-plot(s_time_analog, static.Cal.sForceP4(:,1))
+plot(static_time_analog, static.Cal.sForceP4(:,1))
 title('FP4')
 xlabel('Time (s)')
 ylabel('Force (N)')
 hold on
-plot(s_time_analog, static.Cal.sForceP4(:,2))
-plot(s_time_analog, static.Cal.sForceP4(:,3))
+plot(static_time_analog, static.Cal.sForceP4(:,2))
+plot(static_time_analog, static.Cal.sForceP4(:,3))
 
-linkaxes([sub1, sub2, sub3, sub4])
+linkaxes([sub1, sub2, sub3, sub4], 'y')
 
 %% Calculate Subject Mass 
 
